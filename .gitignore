@@ -1,0 +1,22 @@
+# OS artifacts
+.DS_Store
+Thumbs.db
+desktop.ini
+ehthumbs.db
+
+# Python (dev server)
+__pycache__/
+*.pyc
+*.pyo
+
+# Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Local book files
+*.epub
+
+# Local notes / scratch files
+*.local.*

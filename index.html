@@ -1,0 +1,2161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Primal Intelligence — Workbook</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=DM+Sans:wght@300;400;500;600&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════
+   PRIMAL INTELLIGENCE WORKBOOK — CSS
+   ═══════════════════════════════════════════════════ */
+:root {
+  --bg:       #0A0C0F;
+  --bg2:      #111318;
+  --bg3:      #191D24;
+  --border:   #252B36;
+  --gold:     #D4A843;
+  --gold-dim: #9A7830;
+  --teal:     #2BBFB6;
+  --teal-dim: #1A7873;
+  --muted:    #5A6478;
+  --text:     #C8D0DC;
+  --text-hi:  #EEF2F8;
+  --red:      #E05555;
+  --green:    #4CAF80;
+
+  --radius:   12px;
+  --radius-sm:8px;
+  --shadow:   0 4px 24px rgba(0,0,0,.5);
+  --transition: 0.22s cubic-bezier(.4,0,.2,1);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  line-height: 1.65;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── GRAIN OVERLAY ── */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none; z-index: 9999;
+  opacity: .4;
+}
+
+/* ── LAYOUT ── */
+.app { display: flex; min-height: 100vh; }
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width: 240px; min-height: 100vh;
+  background: var(--bg2);
+  border-right: 1px solid var(--border);
+  display: flex; flex-direction: column;
+  position: fixed; top: 0; left: 0;
+  z-index: 100;
+  transition: transform var(--transition);
+}
+
+.sidebar-logo {
+  padding: 28px 24px 20px;
+  border-bottom: 1px solid var(--border);
+}
+.sidebar-logo .book-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 18px; font-weight: 700;
+  color: var(--gold);
+  letter-spacing: .02em;
+  line-height: 1.2;
+}
+.sidebar-logo .book-sub {
+  font-size: 10px; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--muted);
+  margin-top: 4px;
+}
+
+.sidebar-nav { flex: 1; padding: 16px 0; overflow-y: auto; }
+
+.nav-section-label {
+  font-size: 9px; letter-spacing: .14em;
+  text-transform: uppercase; color: var(--muted);
+  padding: 8px 24px 4px;
+  margin-top: 8px;
+}
+
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 24px;
+  cursor: pointer;
+  border-left: 2px solid transparent;
+  transition: all var(--transition);
+  color: var(--muted);
+  font-size: 13.5px; font-weight: 400;
+  user-select: none;
+}
+.nav-item:hover { color: var(--text); background: rgba(255,255,255,.04); }
+.nav-item.active {
+  color: var(--gold);
+  border-left-color: var(--gold);
+  background: rgba(212,168,67,.06);
+  font-weight: 500;
+}
+.nav-item .icon { width: 16px; text-align: center; font-size: 14px; flex-shrink: 0; }
+
+.sidebar-footer {
+  padding: 16px 24px;
+  border-top: 1px solid var(--border);
+  font-size: 11px; color: var(--muted);
+}
+.sidebar-footer .footer-credit {
+  margin-bottom: 10px;
+}
+.footer-data-btns {
+  display: flex; gap: 6px;
+}
+.footer-data-btns button {
+  flex: 1;
+  background: var(--bg3); border: 1px solid var(--border);
+  color: var(--muted); font-family: 'DM Sans', sans-serif;
+  font-size: 10px; letter-spacing: .06em;
+  text-transform: uppercase;
+  padding: 6px 4px; border-radius: 6px;
+  cursor: pointer; transition: all var(--transition);
+}
+.footer-data-btns button:hover {
+  border-color: var(--gold-dim); color: var(--gold);
+}
+#importFileInput { display: none; }
+
+/* ── MAIN CONTENT ── */
+.main {
+  margin-left: 240px;
+  flex: 1;
+  padding: 40px 48px;
+  max-width: 1100px;
+}
+
+/* ── HAMBURGER ── */
+.hamburger {
+  display: none;
+  position: fixed; top: 16px; left: 16px; z-index: 200;
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 8px; padding: 8px 10px;
+  cursor: pointer; color: var(--text);
+  font-size: 18px; line-height: 1;
+}
+
+/* ── VIEWS (show/hide) ── */
+.view { display: none; animation: fadeIn .3s ease; }
+.view.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+/* ── TYPOGRAPHY ── */
+h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(32px, 4vw, 52px);
+  font-weight: 700; color: var(--text-hi);
+  line-height: 1.1; letter-spacing: -.01em;
+}
+h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(22px, 3vw, 32px);
+  font-weight: 600; color: var(--text-hi);
+  line-height: 1.2;
+}
+h3 {
+  font-size: 14px; font-weight: 600;
+  letter-spacing: .06em; text-transform: uppercase;
+  color: var(--gold);
+}
+p { color: var(--text); line-height: 1.7; }
+
+.label {
+  font-size: 10px; letter-spacing: .14em;
+  text-transform: uppercase; color: var(--muted);
+}
+
+/* ── CARDS ── */
+.card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px;
+  transition: border-color var(--transition);
+}
+.card:hover { border-color: #353D4E; }
+
+.card-grid { display: grid; gap: 16px; }
+.card-grid-2 { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+.card-grid-3 { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+
+/* ── POWER BADGES ── */
+.power-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 10px; border-radius: 20px;
+  font-size: 10px; font-weight: 600;
+  letter-spacing: .08em; text-transform: uppercase;
+}
+.badge-intuition  { background: rgba(212,168,67,.15); color: var(--gold); }
+.badge-imagination{ background: rgba(43,191,182,.15); color: var(--teal); }
+.badge-emotion    { background: rgba(224,85,85,.15);  color: var(--red); }
+.badge-commonsense{ background: rgba(76,175,128,.15); color: var(--green); }
+.badge-innovation { background: rgba(180,120,255,.15);color: #B478FF; }
+.badge-resilience { background: rgba(255,160,80,.15); color: #FFA050; }
+.badge-decision   { background: rgba(80,160,255,.15); color: #50A0FF; }
+.badge-communication{background: rgba(255,200,80,.15);color: #FFC850; }
+.badge-coaching   { background: rgba(100,220,140,.15);color: #64DC8C; }
+.badge-leadership { background: rgba(212,168,67,.2);  color: var(--gold); }
+.badge-moto       { background: rgba(150,130,200,.15);color: #9682C8; }
+.badge-storythinking{background:rgba(200,160,120,.15);color:#C8A078;}
+
+/* ── BUTTONS ── */
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 10px 20px; border-radius: var(--radius-sm);
+  font-size: 13px; font-weight: 500; font-family: 'DM Sans', sans-serif;
+  cursor: pointer; border: none; transition: all var(--transition);
+  text-decoration: none;
+}
+.btn-primary {
+  background: var(--gold); color: #0A0C0F;
+}
+.btn-primary:hover { background: #E8BC55; transform: translateY(-1px); }
+.btn-secondary {
+  background: transparent; color: var(--text);
+  border: 1px solid var(--border);
+}
+.btn-secondary:hover { border-color: var(--gold); color: var(--gold); }
+.btn-ghost {
+  background: transparent; color: var(--muted);
+  padding: 6px 12px;
+}
+.btn-ghost:hover { color: var(--text); }
+.btn-teal { background: var(--teal); color: #0A0C0F; }
+.btn-teal:hover { background: #38D5CC; }
+.btn-sm { padding: 7px 14px; font-size: 12px; }
+
+/* ── INPUTS & TEXTAREAS ── */
+textarea, input[type="text"] {
+  width: 100%; background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-hi); font-family: 'DM Sans', sans-serif;
+  font-size: 14px; line-height: 1.6;
+  padding: 12px 16px; resize: vertical;
+  transition: border-color var(--transition);
+  outline: none;
+}
+textarea:focus, input[type="text"]:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(212,168,67,.1);
+}
+textarea { min-height: 100px; }
+
+.input-group { display: flex; flex-direction: column; gap: 6px; }
+.input-label { font-size: 12px; font-weight: 500; color: var(--text); }
+.input-hint  { font-size: 11px; color: var(--muted); font-style: italic; }
+
+/* ── PROGRESS BAR ── */
+.progress-bar {
+  height: 4px; background: var(--bg3);
+  border-radius: 2px; overflow: hidden;
+}
+.progress-fill {
+  height: 100%; border-radius: 2px;
+  background: linear-gradient(90deg, var(--gold), var(--teal));
+  transition: width .5s cubic-bezier(.4,0,.2,1);
+}
+
+/* ── DIVIDERS ── */
+.section-gap { height: 40px; }
+.divider { border: none; border-top: 1px solid var(--border); margin: 32px 0; }
+
+/* ── PAGE HEADER ── */
+.page-header { margin-bottom: 40px; }
+.page-header .eyebrow {
+  font-size: 10px; letter-spacing: .16em; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 8px; display: block;
+}
+
+/* ═══════════════════ DASHBOARD ═══════════════════ */
+
+.dashboard-hero {
+  background: linear-gradient(135deg, #111520 0%, #0D1A1A 100%);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 40px 44px;
+  position: relative; overflow: hidden;
+  margin-bottom: 32px;
+}
+.dashboard-hero::before {
+  content: 'PRIMAL';
+  position: absolute; right: -20px; top: -30px;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 160px; color: rgba(212,168,67,.04);
+  line-height: 1; pointer-events: none;
+  user-select: none;
+}
+.dashboard-hero h1 { margin-bottom: 8px; }
+.dashboard-hero p { max-width: 560px; color: var(--muted); margin-bottom: 24px; }
+
+.stat-pills { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 24px; }
+.stat-pill {
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: 20px; padding: 6px 14px;
+  font-size: 12px; color: var(--muted);
+  display: flex; align-items: center; gap: 6px;
+}
+.stat-pill strong { color: var(--text-hi); }
+
+/* Power Score Cards */
+.power-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 12px; margin-bottom: 32px;
+}
+.power-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 18px 16px;
+  text-align: center; cursor: pointer;
+  transition: all var(--transition);
+}
+.power-card:hover { border-color: var(--gold); transform: translateY(-2px); }
+.power-card .power-icon { font-size: 24px; margin-bottom: 8px; }
+.power-card .power-name {
+  font-size: 10px; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 8px;
+}
+.power-card .power-score {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 28px; font-weight: 700; color: var(--gold);
+  line-height: 1;
+}
+.power-card .power-bar {
+  height: 3px; background: var(--bg3);
+  border-radius: 2px; margin-top: 8px; overflow: hidden;
+}
+.power-card .power-bar-fill {
+  height: 100%; border-radius: 2px;
+  transition: width .8s cubic-bezier(.4,0,.2,1);
+}
+
+/* ── RADAR CHART ── */
+.radar-wrap {
+  display: flex; align-items: center; justify-content: center;
+  padding: 16px 0;
+}
+#radarChart { max-width: 280px; width: 100%; }
+
+/* Chapters Progress */
+.chapters-progress {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius); overflow: hidden;
+}
+.chapters-progress-header {
+  padding: 20px 24px; display: flex; justify-content: space-between; align-items: center;
+  border-bottom: 1px solid var(--border);
+}
+.chapters-progress-list { padding: 8px 0; }
+.ch-progress-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 24px;
+  cursor: pointer;
+  transition: background var(--transition);
+}
+.ch-progress-item:hover { background: rgba(255,255,255,.03); }
+.ch-num {
+  width: 24px; height: 24px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 600; flex-shrink: 0;
+  background: var(--bg3); color: var(--muted);
+  border: 1px solid var(--border);
+}
+.ch-num.done { background: rgba(76,175,128,.2); color: var(--green); border-color: rgba(76,175,128,.3); }
+.ch-progress-name { flex: 1; font-size: 13px; }
+.ch-progress-badge { margin-left: auto; }
+
+/* ═══════════════════ QUIZ ═══════════════════ */
+
+.quiz-container { max-width: 680px; }
+
+.quiz-header { margin-bottom: 32px; }
+.quiz-progress-info {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 12px; font-size: 12px; color: var(--muted);
+}
+
+.quiz-section-label {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 6px 14px; border-radius: 20px;
+  background: rgba(212,168,67,.1); border: 1px solid rgba(212,168,67,.2);
+  color: var(--gold); font-size: 11px; font-weight: 600;
+  letter-spacing: .08em; text-transform: uppercase;
+  margin-bottom: 24px;
+}
+
+.quiz-question {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px; font-weight: 400; color: var(--text-hi);
+  line-height: 1.4; margin-bottom: 28px;
+}
+
+.likert-scale {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px; margin-bottom: 32px;
+}
+.likert-btn {
+  display: flex; flex-direction: column;
+  align-items: center; gap: 6px;
+  padding: 14px 8px;
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); cursor: pointer;
+  transition: all var(--transition);
+  color: var(--muted); font-size: 11px; font-weight: 500;
+  text-align: center; line-height: 1.3;
+}
+.likert-btn:hover { border-color: var(--gold-dim); color: var(--text); }
+.likert-btn.selected {
+  background: rgba(212,168,67,.12);
+  border-color: var(--gold); color: var(--gold);
+}
+.likert-btn .likert-dot {
+  width: 10px; height: 10px; border-radius: 50%;
+  border: 2px solid currentColor; flex-shrink: 0;
+}
+.likert-btn.selected .likert-dot { background: var(--gold); }
+
+.quiz-nav { display: flex; gap: 12px; justify-content: space-between; align-items: center; }
+
+/* RESULTS */
+.quiz-results { max-width: 700px; }
+.results-hero {
+  text-align: center; padding: 40px 0 32px;
+}
+.results-subtitle { color: var(--muted); margin-top: 8px; }
+
+.results-grid {
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;
+  margin: 32px 0;
+}
+.result-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 20px;
+}
+.result-card .result-score {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 40px; font-weight: 700;
+  line-height: 1; margin: 8px 0;
+}
+.result-card .result-bar { margin: 8px 0; height: 5px; }
+.result-card .result-label { font-size: 11px; color: var(--muted); }
+.result-card .result-desc { font-size: 13px; color: var(--text); margin-top: 8px; line-height: 1.5; }
+
+/* ═══════════════════ WORKBOOK ═══════════════════ */
+
+.workbook-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px; margin-bottom: 40px;
+}
+
+.chapter-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 24px;
+  cursor: pointer; transition: all var(--transition);
+  position: relative; overflow: hidden;
+}
+.chapter-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  opacity: 0; transition: opacity var(--transition);
+}
+.chapter-card:hover { border-color: #353D4E; transform: translateY(-2px); }
+.chapter-card:hover::before { opacity: 1; }
+.chapter-card.completed { border-color: rgba(76,175,128,.25); }
+.chapter-card.completed::before { background: var(--green); opacity: 1; }
+
+.ch-card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+.ch-card-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 40px; color: var(--border);
+  line-height: 1;
+}
+.ch-card-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 20px; font-weight: 600;
+  color: var(--text-hi); margin: 6px 0 4px;
+  line-height: 1.2;
+}
+.ch-card-tagline {
+  font-size: 11px; color: var(--muted); font-style: italic;
+  line-height: 1.4; margin-bottom: 12px;
+}
+.ch-card-progress { margin-top: 16px; }
+.ch-card-progress-info {
+  display: flex; justify-content: space-between;
+  font-size: 11px; color: var(--muted); margin-bottom: 4px;
+}
+
+/* CHAPTER DETAIL */
+.chapter-detail { display: none; max-width: 740px; }
+.chapter-detail.active { display: block; animation: fadeIn .3s ease; }
+
+.ch-detail-header {
+  display: flex; align-items: flex-start; gap: 20px; margin-bottom: 32px;
+}
+.ch-detail-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 80px; color: rgba(212,168,67,.15);
+  line-height: .9; flex-shrink: 0;
+}
+
+.key-insight {
+  background: linear-gradient(135deg, rgba(212,168,67,.08), rgba(43,191,182,.08));
+  border: 1px solid rgba(212,168,67,.2);
+  border-radius: var(--radius); padding: 20px 24px;
+  margin: 24px 0;
+}
+.key-insight .ki-label {
+  font-size: 9px; letter-spacing: .16em; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 8px; display: block;
+}
+.key-insight p { color: var(--text-hi); font-size: 14px; font-style: italic; line-height: 1.6; }
+
+.example-callout {
+  background: var(--bg3); border-left: 3px solid var(--teal);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  padding: 14px 18px; margin: 20px 0;
+  font-size: 13px; color: var(--muted);
+}
+.example-callout strong { color: var(--teal); }
+
+.exercise-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.exercise-item {
+  display: flex; align-items: flex-start; gap: 12px;
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 14px 16px;
+  cursor: pointer; transition: all var(--transition);
+}
+.exercise-item:hover { border-color: var(--gold-dim); }
+.exercise-item.checked { border-color: rgba(76,175,128,.3); background: rgba(76,175,128,.05); }
+.exercise-check {
+  width: 18px; height: 18px; border-radius: 4px;
+  border: 2px solid var(--border); flex-shrink: 0;
+  margin-top: 1px; display: flex; align-items: center; justify-content: center;
+  transition: all var(--transition);
+}
+.exercise-item.checked .exercise-check {
+  background: var(--green); border-color: var(--green); color: #fff;
+}
+.exercise-text { font-size: 13px; line-height: 1.55; }
+
+.reflection-section h3 { margin-bottom: 16px; }
+.reflection-group { display: flex; flex-direction: column; gap: 16px; }
+
+/* ═══════════════════ STORY BUILDER ═══════════════════ */
+
+.story-section {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 32px; margin-bottom: 24px;
+}
+.story-section-header {
+  display: flex; align-items: center; gap: 14px; margin-bottom: 24px;
+}
+.story-section-icon {
+  width: 40px; height: 40px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; flex-shrink: 0;
+}
+.icon-past  { background: rgba(212,168,67,.12); }
+.icon-future{ background: rgba(43,191,182,.12); }
+
+.story-diagram {
+  display: flex; align-items: center; justify-content: center;
+  gap: 0; margin: 32px 0; padding: 24px;
+  background: var(--bg3); border-radius: var(--radius);
+  border: 1px solid var(--border);
+}
+.story-node {
+  text-align: center; padding: 0 20px;
+}
+.story-node-circle {
+  width: 56px; height: 56px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; margin: 0 auto 8px;
+}
+.node-past  { background: rgba(212,168,67,.15); border: 2px solid rgba(212,168,67,.3); }
+.node-now   { background: rgba(43,191,182,.15); border: 2px solid rgba(43,191,182,.4); }
+.node-future{ background: rgba(150,130,200,.15); border: 2px solid rgba(150,130,200,.3); }
+.story-arrow { color: var(--muted); font-size: 20px; padding: 0 8px; flex-shrink: 0; }
+.story-node-label { font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+
+.tactics-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.tactic-card {
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 16px;
+}
+.tactic-num {
+  font-family: 'Bebas Neue', sans-serif; font-size: 32px;
+  color: var(--teal); line-height: 1; margin-bottom: 6px;
+}
+
+/* ═══════════════════ DAILY PRACTICE ═══════════════════ */
+
+.daily-hero {
+  background: linear-gradient(135deg, rgba(212,168,67,.08), rgba(43,191,182,.05));
+  border: 1px solid rgba(212,168,67,.15);
+  border-radius: var(--radius); padding: 32px; margin-bottom: 24px;
+  position: relative; overflow: hidden;
+}
+.daily-hero::after {
+  content: attr(data-day);
+  position: absolute; right: 20px; bottom: -10px;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 100px; color: rgba(212,168,67,.07);
+  line-height: 1; pointer-events: none;
+}
+
+.streak-display {
+  display: flex; align-items: center; gap: 16px; margin-bottom: 16px;
+}
+.streak-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 64px; font-weight: 700; color: var(--gold); line-height: 1;
+}
+.streak-info { font-size: 13px; color: var(--muted); }
+.streak-info strong { display: block; font-size: 18px; color: var(--text-hi); font-family: 'Cormorant Garamond', serif; }
+
+.challenge-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 28px; margin-bottom: 24px;
+}
+.challenge-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.challenge-prompt {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 20px; color: var(--text-hi);
+  line-height: 1.4; margin-bottom: 16px;
+}
+
+.journal-entry {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 28px;
+}
+.journal-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 20px;
+}
+.journal-date { font-size: 12px; color: var(--muted); }
+
+/* ═══════════════════ PROGRESS ═══════════════════ */
+
+.progress-overview {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px; margin-bottom: 32px;
+}
+.progress-stat {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 20px;
+  text-align: center;
+}
+.progress-stat-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 42px; font-weight: 700; color: var(--gold);
+  line-height: 1;
+}
+.progress-stat-label { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+.timeline { position: relative; }
+.timeline::before {
+  content: ''; position: absolute; left: 16px; top: 0; bottom: 0;
+  width: 1px; background: var(--border);
+}
+.timeline-item {
+  display: flex; gap: 20px; margin-bottom: 20px; position: relative;
+}
+.timeline-dot {
+  width: 33px; height: 33px; border-radius: 50%; flex-shrink: 0;
+  background: var(--bg2); border: 2px solid var(--gold);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; z-index: 1;
+}
+.timeline-content {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 14px 18px; flex: 1;
+}
+.timeline-content .tl-title { font-size: 14px; font-weight: 500; color: var(--text-hi); }
+.timeline-content .tl-date  { font-size: 11px; color: var(--muted); }
+.timeline-content .tl-note  { font-size: 13px; color: var(--text); margin-top: 6px; }
+
+.growth-notes { margin-top: 32px; }
+.growth-note-input {
+  display: flex; gap: 10px; margin-bottom: 20px;
+}
+.growth-note-input input { flex: 1; }
+
+.notes-list { display: flex; flex-direction: column; gap: 10px; }
+.note-item {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 14px 18px;
+  display: flex; align-items: flex-start; gap: 12px;
+}
+.note-item .note-text { flex: 1; font-size: 13px; line-height: 1.5; }
+.note-item .note-date { font-size: 10px; color: var(--muted); flex-shrink: 0; }
+.note-delete { background: none; border: none; color: var(--muted); cursor: pointer; padding: 0 4px; font-size: 16px; line-height: 1; }
+.note-delete:hover { color: var(--red); }
+
+/* ═══════════════════ UTILITIES ═══════════════════ */
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.items-center { align-items: center; }
+.justify-between { justify-content: space-between; }
+.gap-8  { gap: 8px; }
+.gap-12 { gap: 12px; }
+.gap-16 { gap: 16px; }
+.gap-24 { gap: 24px; }
+.mt-8   { margin-top: 8px; }
+.mt-12  { margin-top: 12px; }
+.mt-16  { margin-top: 16px; }
+.mt-24  { margin-top: 24px; }
+.mb-16  { margin-bottom: 16px; }
+.mb-24  { margin-bottom: 24px; }
+.text-gold { color: var(--gold); }
+.text-teal { color: var(--teal); }
+.text-muted{ color: var(--muted); }
+.text-hi   { color: var(--text-hi); }
+.text-sm   { font-size: 12px; }
+.italic    { font-style: italic; }
+.serif     { font-family: 'Cormorant Garamond', serif; }
+
+.empty-state {
+  text-align: center; padding: 48px 24px;
+  color: var(--muted);
+}
+.empty-state .empty-icon { font-size: 40px; margin-bottom: 12px; opacity: .5; }
+.empty-state p { font-size: 14px; }
+
+/* ═══════════════════ RESPONSIVE ═══════════════════ */
+@media (max-width: 860px) {
+  .sidebar { transform: translateX(-100%); }
+  .sidebar.open { transform: translateX(0); box-shadow: 4px 0 40px rgba(0,0,0,.6); }
+  .main { margin-left: 0; padding: 24px 20px; padding-top: 64px; }
+  .hamburger { display: block; }
+  .results-grid { grid-template-columns: 1fr; }
+  .tactics-grid { grid-template-columns: 1fr; }
+  .likert-scale { grid-template-columns: repeat(5, 1fr); gap: 4px; }
+  .likert-btn { padding: 10px 4px; font-size: 10px; }
+  .dashboard-hero { padding: 24px; }
+}
+@media (max-width: 520px) {
+  .power-grid { grid-template-columns: repeat(2, 1fr); }
+  .workbook-grid { grid-template-columns: 1fr; }
+}
+
+/* Overlay for mobile sidebar */
+.overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,.6); z-index: 99;
+}
+.overlay.active { display: block; }
+
+/* Save indicator */
+.save-toast {
+  position: fixed; bottom: 24px; right: 24px;
+  background: var(--bg2); border: 1px solid var(--green);
+  color: var(--green); padding: 10px 18px;
+  border-radius: var(--radius-sm); font-size: 13px;
+  opacity: 0; transform: translateY(8px);
+  transition: all .3s ease; pointer-events: none;
+  z-index: 1000;
+}
+.save-toast.show { opacity: 1; transform: none; }
+</style>
+</head>
+<body>
+
+<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+<button class="hamburger" onclick="toggleSidebar()">☰</button>
+<div class="save-toast" id="saveToast">✓ Saved</div>
+
+<div class="app">
+  <!-- ── SIDEBAR ── -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="book-title">Primal Intelligence</div>
+      <div class="book-sub">You Are Smarter Than You Know</div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-item active" data-view="dashboard" onclick="navigate('dashboard', this)">
+        <span class="icon">⚡</span> Dashboard
+      </div>
+      <div class="nav-item" data-view="quiz" onclick="navigate('quiz', this)">
+        <span class="icon">📊</span> Self-Assessment
+      </div>
+      <div class="nav-section-label">Workbook</div>
+      <div class="nav-item" data-view="workbook" onclick="navigate('workbook', this)">
+        <span class="icon">📖</span> 12 Chapters
+      </div>
+      <div class="nav-item" data-view="story" onclick="navigate('story', this)">
+        <span class="icon">✍️</span> My Story Builder
+      </div>
+      <div class="nav-section-label">Practice</div>
+      <div class="nav-item" data-view="daily" onclick="navigate('daily', this)">
+        <span class="icon">🔥</span> Daily Practice
+      </div>
+      <div class="nav-item" data-view="progress" onclick="navigate('progress', this)">
+        <span class="icon">📈</span> Progress
+      </div>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="footer-credit">Angus Fletcher · 2025</div>
+      <div class="footer-data-btns">
+        <button onclick="exportData()" title="Download your workbook data as JSON">⬇ Export</button>
+        <button onclick="document.getElementById('importFileInput').click()" title="Restore from a previously exported JSON file">⬆ Import</button>
+      </div>
+      <input type="file" id="importFileInput" accept=".json" onchange="importData(event)">
+    </div>
+  </aside>
+
+  <!-- ── MAIN ── -->
+  <main class="main">
+
+    <!-- ════════ DASHBOARD ════════ -->
+    <div class="view active" id="view-dashboard">
+      <div class="dashboard-hero">
+        <div class="label" style="margin-bottom:10px">Your Primal Intelligence Workbook</div>
+        <h1>You Are Smarter<br><em style="font-style:italic;color:var(--gold)">Than You Know</em></h1>
+        <p>Your brain evolved to think in stories, not data. This workbook reactivates the four primal powers — intuition, imagination, emotion, and commonsense — that modern schooling suppressed.</p>
+        <div class="stat-pills" id="dashStats"></div>
+        <button class="btn btn-primary" onclick="navigate('quiz', document.querySelector('[data-view=quiz]'))">
+          Take the Self-Assessment →
+        </button>
+      </div>
+
+      <!-- Power Scores -->
+      <div class="flex justify-between items-center mb-16">
+        <h2 style="font-size:20px">Your Primal Powers</h2>
+        <button class="btn btn-ghost btn-sm" onclick="navigate('quiz', document.querySelector('[data-view=quiz]'))">Retake Quiz</button>
+      </div>
+
+      <div class="power-grid" id="dashPowerGrid">
+        <!-- filled by JS -->
+      </div>
+
+      <!-- Two column: radar + chapter progress -->
+      <div class="card-grid card-grid-2" style="margin-bottom:32px">
+        <div class="card">
+          <h3 style="margin-bottom:16px">Radar View</h3>
+          <div class="radar-wrap">
+            <canvas id="radarChart" width="280" height="280"></canvas>
+          </div>
+        </div>
+        <div class="chapters-progress">
+          <div class="chapters-progress-header">
+            <h3>Chapter Progress</h3>
+            <span class="text-sm text-muted" id="chapCount">0/12 chapters</span>
+          </div>
+          <div class="chapters-progress-list" id="chapProgressList">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════ QUIZ ════════ -->
+    <div class="view" id="view-quiz">
+      <div id="quizScreen" class="quiz-container">
+        <div class="page-header">
+          <span class="eyebrow">Self-Assessment</span>
+          <h1>Primal Powers Quiz</h1>
+          <p class="text-muted mt-8" style="max-width:520px">20 questions to diagnose your four primal powers and build a growth plan. Answer honestly — there are no wrong answers.</p>
+        </div>
+        <div class="quiz-header">
+          <div class="quiz-progress-info">
+            <span id="qProgressLabel">Question 1 of 20</span>
+            <span id="qSectionLabel">Section I: Intuition</span>
+          </div>
+          <div class="progress-bar"><div class="progress-fill" id="qProgressBar" style="width:5%"></div></div>
+        </div>
+
+        <div id="quizSectionBadge" class="quiz-section-label">Section I · Intuition</div>
+        <div class="quiz-question serif" id="quizQuestion">Loading...</div>
+
+        <div class="likert-scale" id="likertScale">
+          <button class="likert-btn" onclick="selectAnswer(1)"><span class="likert-dot"></span>Strongly Disagree</button>
+          <button class="likert-btn" onclick="selectAnswer(2)"><span class="likert-dot"></span>Disagree</button>
+          <button class="likert-btn" onclick="selectAnswer(3)"><span class="likert-dot"></span>Neutral</button>
+          <button class="likert-btn" onclick="selectAnswer(4)"><span class="likert-dot"></span>Agree</button>
+          <button class="likert-btn" onclick="selectAnswer(5)"><span class="likert-dot"></span>Strongly Agree</button>
+        </div>
+
+        <div class="quiz-nav">
+          <button class="btn btn-secondary" id="qPrevBtn" onclick="quizPrev()">← Back</button>
+          <button class="btn btn-primary" id="qNextBtn" onclick="quizNext()">Next →</button>
+        </div>
+      </div>
+
+      <div id="quizResults" class="quiz-results" style="display:none">
+        <div class="results-hero">
+          <span class="eyebrow">Results</span>
+          <h1>Your Primal Profile</h1>
+          <p class="results-subtitle">Here's how your four primal powers compare. Use the lowest score as your starting point for growth.</p>
+        </div>
+        <div class="results-grid" id="resultsGrid"></div>
+        <div class="card" style="margin-bottom:24px">
+          <h3 style="margin-bottom:12px">Radar Chart</h3>
+          <div class="radar-wrap">
+            <canvas id="radarChart2" width="280" height="280"></canvas>
+          </div>
+        </div>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;">
+          <button class="btn btn-primary" onclick="navigate('workbook', document.querySelector('[data-view=workbook]'))">Start the Workbook →</button>
+          <button class="btn btn-secondary" onclick="retakeQuiz()">Retake Quiz</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════ WORKBOOK ════════ -->
+    <div class="view" id="view-workbook">
+      <div id="workbookList">
+        <div class="page-header">
+          <span class="eyebrow">Workbook</span>
+          <h1>12 Chapters</h1>
+          <p class="text-muted mt-8">Work through each chapter at your own pace. Reflect, practice, and mark exercises complete.</p>
+        </div>
+        <div class="workbook-grid" id="chapterGrid"></div>
+      </div>
+      <div id="chapterDetail" class="chapter-detail"></div>
+    </div>
+
+    <!-- ════════ STORY BUILDER ════════ -->
+    <div class="view" id="view-story">
+      <div class="page-header">
+        <span class="eyebrow">Story Builder</span>
+        <h1>My Primal Story</h1>
+        <p class="text-muted mt-8">Your intelligence is strongest when your past is integrated and your future is branching. Build both here.</p>
+      </div>
+
+      <div class="story-diagram">
+        <div class="story-node">
+          <div class="story-node-circle node-past">📚</div>
+          <div class="story-node-label">Integrated Past</div>
+        </div>
+        <div class="story-arrow">→</div>
+        <div class="story-node">
+          <div class="story-node-circle node-now">⚡</div>
+          <div class="story-node-label">You Now</div>
+        </div>
+        <div class="story-arrow">→</div>
+        <div class="story-node">
+          <div class="story-node-circle node-future">🌿</div>
+          <div class="story-node-label">Branching Future</div>
+        </div>
+      </div>
+
+      <!-- Integrated Past -->
+      <div class="story-section">
+        <div class="story-section-header">
+          <div class="story-section-icon icon-past">📚</div>
+          <div>
+            <h3>Integrated Past</h3>
+            <p class="text-muted text-sm mt-8">Weave your history into a coherent story that explains who you are and what drives you.</p>
+          </div>
+        </div>
+        <div class="reflection-group">
+          <div class="input-group">
+            <label class="input-label">What exceptions or anomalies in your life have defined you?</label>
+            <p class="input-hint">What moments stand out as genuinely strange or surprising about your story?</p>
+            <textarea id="story_anomalies" placeholder="Think of 2-3 moments that felt like exceptions to the rules everyone else was following..." oninput="saveStory()" rows="4"></textarea>
+          </div>
+          <div class="input-group">
+            <label class="input-label">What is the core story you tell yourself about your past?</label>
+            <p class="input-hint">The most important story is the story you think to yourself about yourself.</p>
+            <textarea id="story_narrative" placeholder="Write your story in a few sentences. Not a resume — a story with a through-line..." oninput="saveStory()" rows="4"></textarea>
+          </div>
+          <div class="input-group">
+            <label class="input-label">What strengths have you developed from setbacks?</label>
+            <textarea id="story_strengths" placeholder="What specific capabilities did your hardest moments build in you?" oninput="saveStory()" rows="3"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Branching Future -->
+      <div class="story-section">
+        <div class="story-section-header">
+          <div class="story-section-icon icon-future">🌿</div>
+          <div>
+            <h3>Branching Future</h3>
+            <p class="text-muted text-sm mt-8">Strategy = one goal. Tactics = many paths. Define both.</p>
+          </div>
+        </div>
+
+        <div class="input-group mb-24">
+          <label class="input-label">Your ONE Strategic Goal <span class="text-gold">(the single most important)</span></label>
+          <p class="input-hint">List your top 3, rank them, then forget 2 and 3. What remains is your strategy.</p>
+          <textarea id="story_goal" placeholder="My single top priority this year is..." oninput="saveStory()" rows="2"></textarea>
+        </div>
+
+        <div class="mb-24">
+          <div class="input-label" style="margin-bottom:12px">Three Tactical Paths to That Goal</div>
+          <div class="tactics-grid">
+            <div class="tactic-card">
+              <div class="tactic-num">01</div>
+              <textarea id="story_tactic1" placeholder="Path A — the obvious route..." oninput="saveStory()" rows="3" style="min-height:70px"></textarea>
+            </div>
+            <div class="tactic-card">
+              <div class="tactic-num" style="color:var(--gold)">02</div>
+              <textarea id="story_tactic2" placeholder="Path B — a less obvious route..." oninput="saveStory()" rows="3" style="min-height:70px"></textarea>
+            </div>
+            <div class="tactic-card">
+              <div class="tactic-num" style="color:var(--green)">03</div>
+              <textarea id="story_tactic3" placeholder="Path C — the unexpected route..." oninput="saveStory()" rows="3" style="min-height:70px"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label class="input-label">What would Covert Victory look like?</label>
+          <p class="input-hint">Leadership = strategic vision + self-reliance. A Covert Victory is one you're proud of without needing to tell anyone.</p>
+          <textarea id="story_covert" placeholder="The version of success I'd be proud of even if no one else noticed..." oninput="saveStory()" rows="3"></textarea>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:12px">
+        <button class="btn btn-primary" onclick="saveStoryExplicit()">Save My Story</button>
+        <button class="btn btn-secondary" onclick="navigate('workbook', document.querySelector('[data-view=workbook]'))">Go to Workbook →</button>
+      </div>
+    </div>
+
+    <!-- ════════ DAILY PRACTICE ════════ -->
+    <div class="view" id="view-daily">
+      <div class="page-header">
+        <span class="eyebrow">Daily Practice</span>
+        <h1>Today's Challenge</h1>
+      </div>
+
+      <div class="daily-hero" id="dailyHero">
+        <div class="streak-display">
+          <div class="streak-num" id="streakNum">0</div>
+          <div class="streak-info">
+            <strong id="streakLabel">Day Streak</strong>
+            <span>Keep showing up every day</span>
+          </div>
+        </div>
+        <div class="flex gap-12">
+          <button class="btn btn-primary btn-sm" onclick="markDailyDone()">✓ Mark Today Complete</button>
+          <button class="btn btn-secondary btn-sm" onclick="nextChallenge()">↻ New Challenge</button>
+        </div>
+      </div>
+
+      <div class="challenge-card">
+        <div class="challenge-header">
+          <div id="dailyChallengeBadge" class="power-badge badge-intuition">Intuition</div>
+          <span class="text-sm text-muted" id="dailyChallengeDay">Day 1</span>
+        </div>
+        <div class="challenge-prompt serif" id="dailyChallengeText">Loading...</div>
+        <p class="text-sm text-muted" id="dailyChallengeHint"></p>
+      </div>
+
+      <div class="journal-entry">
+        <div class="journal-header">
+          <h3>Today's Reflection</h3>
+          <span class="journal-date" id="journalDateLabel"></span>
+        </div>
+        <div class="input-group">
+          <textarea id="journalEntry" placeholder="Write your response to today's challenge, or anything on your mind about your primal growth..." rows="6" oninput="saveJournal()"></textarea>
+        </div>
+        <div style="margin-top:12px;display:flex;justify-content:flex-end">
+          <button class="btn btn-teal btn-sm" onclick="saveJournalExplicit()">Save Entry</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════ PROGRESS ════════ -->
+    <div class="view" id="view-progress">
+      <div class="page-header">
+        <span class="eyebrow">Progress</span>
+        <h1>Your Growth</h1>
+      </div>
+
+      <div class="progress-overview" id="progressOverview"></div>
+
+      <hr class="divider">
+
+      <div class="flex justify-between items-center mb-24">
+        <h2 style="font-size:20px">Activity Timeline</h2>
+      </div>
+      <div class="timeline" id="progressTimeline">
+        <div class="empty-state">
+          <div class="empty-icon">📅</div>
+          <p>Complete exercises and journal entries to build your timeline.</p>
+        </div>
+      </div>
+
+      <div class="growth-notes">
+        <div class="flex justify-between items-center mb-16">
+          <h2 style="font-size:20px">Growth Notes</h2>
+        </div>
+        <p class="text-muted text-sm mb-16">Capture insights, breakthroughs, and observations about your growth.</p>
+        <div class="growth-note-input">
+          <input type="text" id="noteInput" placeholder="Add a growth note..." onkeypress="if(event.key==='Enter')addNote()">
+          <button class="btn btn-primary btn-sm" onclick="addNote()">Add Note</button>
+        </div>
+        <div class="notes-list" id="notesList"></div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+//  PRIMAL INTELLIGENCE WORKBOOK — JavaScript
+// ═══════════════════════════════════════════════════════════
+
+// ── DATA ──────────────────────────────────────────────────
+
+const QUIZ_QUESTIONS = [
+  // Section I: Intuition
+  { q: "I'm good at noticing people's unique strengths.", section: 'Intuition', reverse: false },
+  { q: "If something weird or unexpected happens, I rationalize it as random noise or a distraction.", section: 'Intuition', reverse: true },
+  { q: "I have a strong track record of spotting new trends before they become popular.", section: 'Intuition', reverse: false },
+  { q: "When I see someone act strangely, I generally conclude that there's something wrong with them.", section: 'Intuition', reverse: true },
+  { q: "The more I see of the world, the more I realize that there is to discover.", section: 'Intuition', reverse: false },
+  // Section II: Imagination
+  { q: "When life changes, I immediately envision new options.", section: 'Imagination', reverse: false },
+  { q: "I often struggle to reach my long-term goals because I don't see a clear path to get there.", section: 'Imagination', reverse: true },
+  { q: "When something happens, I can quickly list many possible reasons why it occurred.", section: 'Imagination', reverse: false },
+  { q: "If I don't know the answer, I rapidly seek outside guidance.", section: 'Imagination', reverse: true },
+  { q: "I am relaxed when my plans fail because I know that I can improvise.", section: 'Imagination', reverse: false },
+  // Section III: Emotion
+  { q: "When I feel grief or shame, I value them as sources of positive growth.", section: 'Emotion', reverse: false },
+  { q: "Looking back on my life, I have often drifted without a strong sense of direction.", section: 'Emotion', reverse: true },
+  { q: "I rarely get angry but am always assertive.", section: 'Emotion', reverse: false },
+  { q: "I would like to be a leader but generally feel more comfortable following.", section: 'Emotion', reverse: true },
+  { q: "When something (or someone) is harmful for me, I immediately remove it (or them) from my life.", section: 'Emotion', reverse: false },
+  // Section IV: Commonsense
+  { q: "In familiar situations, I immediately repeat what worked in the past.", section: 'Commonsense', reverse: true },
+  { q: "I need a lot of information to make smart decisions.", section: 'Commonsense', reverse: true },
+  { q: "If I'm anxious, it's always because something unprecedented is happening.", section: 'Commonsense', reverse: true },
+  { q: "When circumstances change, I stick to my routine.", section: 'Commonsense', reverse: true },
+  { q: "I am exceptionally good at making financial investments.", section: 'Commonsense', reverse: false },
+];
+
+const SECTION_COLORS = {
+  Intuition:   { color: '#D4A843', bg: 'rgba(212,168,67,.15)',  badge: 'badge-intuition'  },
+  Imagination: { color: '#2BBFB6', bg: 'rgba(43,191,182,.15)', badge: 'badge-imagination' },
+  Emotion:     { color: '#E05555', bg: 'rgba(224,85,85,.15)',   badge: 'badge-emotion'    },
+  Commonsense: { color: '#4CAF80', bg: 'rgba(76,175,128,.15)',  badge: 'badge-commonsense'},
+};
+
+const POWER_ICONS = {
+  Intuition: '🔍', Imagination: '🧩', Emotion: '💡', Commonsense: '🧭',
+  Innovation: '⚡', Resilience: '🌱', 'Decision-Making': '🎯',
+  Communication: '🗣️', Coaching: '🤝', Leadership: '🏔️',
+  Moto: '🧬', Storythinking: '📖'
+};
+
+const SCORE_INTERPRETATIONS = {
+  low:  [5, 14,  "Developing",  "This power is dormant — a major growth opportunity. Start with the foundational exercises in this section."],
+  mid:  [15, 19, "Emerging",    "You have real potential here. Consistent practice will unlock significant growth."],
+  high: [20, 23, "Active",      "Strong foundation. Refine and apply this power in increasingly complex situations."],
+  peak: [24, 25, "Primal",      "This is a natural strength. Use it as your anchor while developing the others."],
+};
+
+function getInterpretation(score) {
+  if (score <= 14) return SCORE_INTERPRETATIONS.low;
+  if (score <= 19) return SCORE_INTERPRETATIONS.mid;
+  if (score <= 23) return SCORE_INTERPRETATIONS.high;
+  return SCORE_INTERPRETATIONS.peak;
+}
+
+const CHAPTERS = [
+  {
+    num: 1, id: 'intuition', title: 'Intuition',
+    part: 'Part I: Primal Activation',
+    tagline: 'Spot the Exception Like Vincent van Gogh and Marie Curie',
+    badge: 'badge-intuition', power: 'Intuition',
+    keyInsight: 'Intuition is not a feeling — it is a cognitive skill. It works by spotting exceptions to rules. Delay "Why" and focus on surprising Who, What, When, Where, and How.',
+    example: 'Van Gogh could see what others ignored: the singular, electric character in every face. Curie noticed that uranium kept radiating even in darkness — an anomaly everyone else explained away.',
+    principle: 'Intuition initiates your story by revealing what\'s exceptional about you and the world.',
+    reflections: [
+      { id: 'r1_1', prompt: 'Recall a moment when you noticed something that others overlooked. What made you notice it?', placeholder: 'Describe the situation and what you saw that others didn\'t...' },
+      { id: 'r1_2', prompt: 'Think of someone in your life you find surprising or unusual. What story explains their behavior — not a judgment, but a narrative?', placeholder: 'What\'s the story behind their actions?' },
+      { id: 'r1_3', prompt: 'What label do you use most often to categorize people? How does that label prevent you from seeing their individual story?', placeholder: 'The label... and how it limits my sight...' },
+    ],
+    exercises: [
+      'Get an old photo from a distant place with unknown people. What could you do in the world of that photo that you can\'t do in your life now?',
+      'List 3 people you think of as "creative." Now remember a specific STORY of when each was creative — not the label, but the event.',
+      'Find two people who excel at exactly the same job. How do they do the job differently? What situation could each handle that the other couldn\'t?',
+    ]
+  },
+  {
+    num: 2, id: 'imagination', title: 'Imagination',
+    part: 'Part I: Primal Activation',
+    tagline: 'Go Low Data Like Ludwig van Beethoven and the Special Operators',
+    badge: 'badge-imagination', power: 'Imagination',
+    keyInsight: 'Imagination turns intuition into plans. To imagine more flexibly, seek new "why"s. To imagine more precisely, restrict yourself to one top goal — strategy is elimination.',
+    example: 'Beethoven went deaf and composed his greatest symphony from silence — no external data, pure inner imagination. Special Operators plan from minimal intel because low data forces creative solutions.',
+    principle: 'Imagination grows your story by developing your exceptionalism into an integrated past and developing the world\'s exceptions into a branching future.',
+    reflections: [
+      { id: 'r2_1', prompt: 'What is a current challenge where you are waiting for more information before acting? What would you do if you had to act with half the information?', placeholder: 'The challenge and what low-data action I\'d take...' },
+      { id: 'r2_2', prompt: 'List your top 3 goals for the year. Rank them. What does your life look like if you focus only on #1?', placeholder: 'My top 3 goals... My #1 strategy...' },
+      { id: 'r2_3', prompt: 'Select a routine you do every day. How could you do it differently tomorrow — not better, just differently?', placeholder: 'The routine and a new approach...' },
+    ],
+    exercises: [
+      'What unlikely hitch could interrupt your day? (Must be new, not a repeat — if you\'ve imagined it before, start over.) Then imagine an unlikely opportunity.',
+      'List your top 3 goals for the year. Rank them. Forget goals 2 and 3 for this month. That remaining goal is your strategy.',
+      'Select a routine task. Do it differently today. Tomorrow, do it a third way. Notice how branching tactics expands your sense of possibility.',
+    ]
+  },
+  {
+    num: 3, id: 'emotion', title: 'Emotion',
+    part: 'Part I: Primal Activation',
+    tagline: 'Self-Assess Like Antigone and the Singletons',
+    badge: 'badge-emotion', power: 'Emotion',
+    keyInsight: 'Emotions are intelligence. Grief = you are divided between two worlds. Shame = you are split into two people. Anger = you see only one future. Fear = you see no future. Each is a signal about your story.',
+    example: 'Antigone\'s grief was not weakness — it was data: she was caught between the law of the city and the law of her family. The Singletons (resilient trauma survivors) used shame not to self-attack, but to identify where their authentic self had been suppressed.',
+    principle: 'Emotion maintains your story by revealing when your past is fragmenting or your future narrowing.',
+    reflections: [
+      { id: 'r3_1', prompt: 'Name an emotion you\'ve felt strongly this week. Using the framework above, what information is it giving you about your story?', placeholder: 'The emotion and what it\'s signaling about my past or future...' },
+      { id: 'r3_2', prompt: 'What are you angry about? What does that anger tell you about which future you believe in — and which paths feel blocked?', placeholder: 'My anger and the single path it reveals...' },
+      { id: 'r3_3', prompt: 'What scares you? How has that fear caused you to copy others rather than follow your own story?', placeholder: 'My fear and how it has made me follow rather than lead...' },
+    ],
+    exercises: [
+      'Practice anger as a tool: engage it by imagining something precious is under threat, then disengage by recalling a time you adapted plans on the fly. Repeat 3 times.',
+      'What scares you most? Write one concrete way that fear has caused you to imitate others instead of being yourself.',
+      'Remember a sacrifice that made you proud. What would you need to do today to earn that same pride?',
+    ]
+  },
+  {
+    num: 4, id: 'commonsense', title: 'Commonsense',
+    part: 'Part I: Primal Activation',
+    tagline: 'Meet the Moment Like Ben Franklin and the Stock Picker',
+    badge: 'badge-commonsense', power: 'Commonsense',
+    keyInsight: 'Commonsense is knowing when you don\'t know. It reveals when your environment has fundamentally shifted, invalidating old plans. The method: eliminate past anxieties by updating your SOPs, then go "Now + 1."',
+    example: 'Franklin trusted his commonsense — reading each situation fresh, not from ideology. The stock picker who beat the market did so by recognizing the moment his old model broke down and stopping, rather than doubling down.',
+    principle: 'Commonsense directs your story by helping you choose which future branch is best for your current situation.',
+    reflections: [
+      { id: 'r4_1', prompt: 'What is a routine or rule you\'ve been following that may no longer fit your current environment?', placeholder: 'The old rule and how the environment has changed...' },
+      { id: 'r4_2', prompt: 'What decision are you currently overthinking? What would "Now + 1" look like — what is the very next action, ignoring everything else?', placeholder: 'The decision and my single next step...' },
+      { id: 'r4_3', prompt: 'Recall a time your commonsense saved you. What signal did you pick up that others missed?', placeholder: 'The situation and the signal I noticed...' },
+    ],
+    exercises: [
+      'Choose something you\'ve succeeded at. Write 3 rules that guided your success. These are your Standard Operating Procedures (SOPs). Which ones still apply today?',
+      'Recall a moment of bad luck. Imagine it happening again. Each time tension rises, remind yourself that luck is outside your control. Repeat until the tension softens.',
+      'List everything that could go wrong this week — then narrow your focus to just the next few seconds. Feel how anxiety grips the moment, then release.',
+    ]
+  },
+  {
+    num: 5, id: 'innovation', title: 'Innovation',
+    part: 'Part II: Primal Application',
+    tagline: 'Welcome the Stranger Like Albert Einstein and Steve Jobs',
+    badge: 'badge-innovation', power: 'Innovation',
+    keyInsight: 'Innovation starts with intuition, accelerated by doubling down on anomalies. Lean into the tension between the "why" of an existing rule and the "what if" of an exception. Then "eat your enemy" — incorporate what threatens you.',
+    example: 'Einstein welcomed the stranger: his thought experiments embraced the anomaly (what if you rode a beam of light?). Jobs incorporated the enemy by hiring designers who challenged every convention Apple had built.',
+    principle: 'True innovation is not about having new ideas — it is about refusing to explain away what is strange.',
+    reflections: [
+      { id: 'r5_1', prompt: 'What recent "failed" initiative had a genuinely original element that was abandoned too early?', placeholder: 'The initiative and its most original, abandoned element...' },
+      { id: 'r5_2', prompt: 'What threatens or annoys you most in your field? What would it mean to incorporate one of its strengths?', placeholder: 'The threat and how I could eat it...' },
+      { id: 'r5_3', prompt: 'Identify a rule in your organization or family. What exception are you already living that hints at a better rule?', placeholder: 'The rule and the exception that reveals a better way...' },
+    ],
+    exercises: [
+      'Revisit a failed initiative. Relaunch it by doubling down on its most original element — the part that was "too weird" to keep.',
+      'Identify a conflict between yourself and your family, community, or organization. Write a new rule that preserves the spirit of their rule while letting you do what you do.',
+      'Study something you find genuinely threatening. How can you incorporate one of its core characteristics without compromising yourself?',
+    ]
+  },
+  {
+    num: 6, id: 'resilience', title: 'Resilience',
+    part: 'Part II: Primal Application',
+    tagline: 'Build Antifragility Like the Clinic Patient and the Third Grader',
+    badge: 'badge-resilience', power: 'Resilience',
+    keyInsight: 'Resilience is more than grit. It requires purpose + flexibility. Trade optimization for antifragility. True optimism = "I CAN succeed" (not "I will"). "Planner not the Plan" = improve the planner, not the plan.',
+    example: 'The clinic patient who recovered fastest weren\'t those with the most willpower — they were those who could imagine multiple paths to recovery. The third grader who thrived after adversity had a story about themselves that could absorb failure.',
+    principle: 'Antifragility means you get stronger from disruption rather than merely enduring it.',
+    reflections: [
+      { id: 'r6_1', prompt: 'What is a setback you are currently optimizing against (trying to prevent)? What would it look like to get stronger FROM that setback?', placeholder: 'The setback and how I could become antifragile to it...' },
+      { id: 'r6_2', prompt: 'What is your current story about yourself when things go wrong? Does it preserve flexibility or does it narrow your future?', placeholder: 'My story about failure and how I want to change it...' },
+      { id: 'r6_3', prompt: 'Recall a fight or conflict that ultimately made a relationship stronger. What happened?', placeholder: 'The conflict and why it strengthened things...' },
+    ],
+    exercises: [
+      'List 5 possible victories you could achieve this year — not just your planned goal, but genuinely different versions of success.',
+      'Recall a fight or conflict that ultimately strengthened a relationship. What made the rupture productive?',
+      'Identify a life goal you\'ve been holding tightly. Find one alternative way to achieve the underlying purpose. Practice releasing the original path.',
+    ]
+  },
+  {
+    num: 7, id: 'decision-making', title: 'Decision-Making',
+    part: 'Part II: Primal Application',
+    tagline: 'Into the Ambush Like George Washington and the Astronauts',
+    badge: 'badge-decision', power: 'Decision-Making',
+    keyInsight: 'The best decisions match the newness of your plan to the newness of your situation. In truly new situations, go where experts can\'t say no — because no one has been there yet.',
+    example: 'Washington didn\'t fight by the rules — he crossed the Delaware in a blizzard at night, turning the enemy\'s expectation against them. Astronauts train to make decisions with incomplete data in unprecedented situations.',
+    principle: 'Decision-making in volatile environments requires embracing the ambush — going into uncertainty deliberately, not being blindsided by it.',
+    reflections: [
+      { id: 'r7_1', prompt: 'Identify a decision you\'re facing. Is the situation genuinely new, or have you been here before? What does that tell you about how much to rely on past rules?', placeholder: 'The decision and whether my old playbook applies...' },
+      { id: 'r7_2', prompt: 'What is a decision where you are waiting for expert consensus? What would you decide if you trusted your own primal assessment?', placeholder: 'The decision and my gut-level take...' },
+      { id: 'r7_3', prompt: 'Think of a "rule" you live by. What situation would make that rule fail? Does knowing this change how you hold the rule?', placeholder: 'My rule and the situation that would break it...' },
+    ],
+    exercises: [
+      'Take each of your core life rules and apply this test: What specific situation would make this rule fail? Write it out.',
+      'Identify a decision you\'ve been postponing for lack of certainty. What is the smallest action that would give you new information right now?',
+      'Recall a time you made an unconventional decision that turned out right. What primal intelligence guided you past the expert consensus?',
+    ]
+  },
+  {
+    num: 8, id: 'communication', title: 'Communication',
+    part: 'Part II: Primal Application',
+    tagline: 'Answer Why Like Maya Angelou and Abraham Lincoln',
+    badge: 'badge-communication', power: 'Communication',
+    keyInsight: 'To communicate your vision: prompt your audience to imagine a question, then answer it better than they can. To communicate instructions: give one goal and tell them WHY. Story is the unit of communication.',
+    example: 'Angelou\'s writing prompted you to feel a question before she answered it. Lincoln\'s Gettysburg Address didn\'t describe the war — it told the nation\'s story and why it mattered.',
+    principle: 'When you replace "what" with "why," you transform instructions into a story that people can live inside.',
+    reflections: [
+      { id: 'r8_1', prompt: 'Draft a message you need to send (to a team, a person, anyone). Now rewrite it replacing every "what" with "why." What changed?', placeholder: 'Before: the what-message... After: the why-message...' },
+      { id: 'r8_2', prompt: 'Think of your most important relationship. What is the single shared goal that unites both your interests?', placeholder: 'The relationship and the shared "why" beneath it...' },
+      { id: 'r8_3', prompt: 'What question do you most want your audience (or partner, or team) to be asking? How can you prompt that question before answering it?', placeholder: 'The question I want them to arrive at first...' },
+    ],
+    exercises: [
+      'Draft an important message. Replace all the "what"s with "why"s. Send the revised version.',
+      'Identify your most important relationship right now. Define the single goal that unites both of your interests. Share it with them.',
+      'The next time you give instructions, give only: one goal + the reason why it matters. Nothing else. Notice the difference.',
+    ]
+  },
+  {
+    num: 9, id: 'coaching', title: 'Coaching',
+    part: 'Part II: Primal Application',
+    tagline: 'Unleash the Rookie Like the Football Champs and Dr. William Osler',
+    badge: 'badge-coaching', power: 'Coaching',
+    keyInsight: 'Coaches always let the rookie fly — and never let the rookie crash. The job is to create the conditions for someone to discover their own primal power, not to manage their performance.',
+    example: 'The football programs that won championships were those where coordinators trusted their rookies with complex plays. Dr. Osler invented the modern medical residency: learn by doing, with a net.',
+    principle: 'You can\'t give someone primal intelligence. You can only create the conditions where they activate it themselves.',
+    reflections: [
+      { id: 'r9_1', prompt: 'Who in your life is a "rookie" (someone newer, less experienced, or less senior)? What is their greatest untapped strength?', placeholder: 'The person and the strength I see that they don\'t yet...' },
+      { id: 'r9_2', prompt: 'Recall a time you micromanaged someone. What was the cost to their development? What would have happened if you\'d let them fly?', placeholder: 'The situation and what I imagine they could have discovered...' },
+      { id: 'r9_3', prompt: 'What does "letting the rookie crash" look like in your context — what failures are too costly, and what failures are necessary?', placeholder: 'The line between productive failure and crash...' },
+    ],
+    exercises: [
+      'Identify a junior person in your life. Have a 15-minute conversation focused only on what they find exceptional or surprising about their work.',
+      'Give someone a task this week without explaining how to do it — only explain why it matters. Observe what they do.',
+      'Recall a time someone let you fly as a rookie. What did that experience give you that no instruction could have?',
+    ]
+  },
+  {
+    num: 10, id: 'leadership', title: 'Leadership',
+    part: 'Part II: Primal Application',
+    tagline: 'Go Self-Reliant Like Wayne Gretzky and Nikola Tesla',
+    badge: 'badge-leadership', power: 'Leadership',
+    keyInsight: 'Leadership = strategic vision + self-reliance. Strategic vision is creating and communicating a story of the future. Self-reliance = acting in a way you are proud of without needing to tell anyone. This is Covert Victory.',
+    example: 'Gretzky didn\'t skate to where the puck was — he skated to where it was going. Tesla worked in isolation for years, pursuing his vision without validation, achieving Covert Victories that the world caught up to later.',
+    principle: 'The leader\'s job is to hold the story of the future clearly enough that others can find their place in it.',
+    reflections: [
+      { id: 'r10_1', prompt: 'Write your vision of the future as a STORY, not a list or goal. What happens? Who is in it? What changes?', placeholder: 'The story of the future I\'m working toward...' },
+      { id: 'r10_2', prompt: 'Identify your last Covert Victory — something you did that you are proud of, but never announced. What made it covert?', placeholder: 'The victory and why I didn\'t need to broadcast it...' },
+      { id: 'r10_3', prompt: 'Where in your leadership are you depending on external validation? What would full self-reliance look like in that area?', placeholder: 'The area and what self-reliance would require of me...' },
+    ],
+    exercises: [
+      'Write your vision of the future as a story — one page, narrative form. Not goals, not bullet points. A story.',
+      'Identify your last Covert Victory. What does the fact that it was covert tell you about your relationship to leadership?',
+      'For one week, take one leadership action per day that you don\'t announce or seek feedback on. Track how it feels.',
+    ]
+  },
+  {
+    num: 11, id: 'moto', title: 'Moto',
+    part: 'Part III: Primal Science',
+    tagline: 'From the Biological Big Bang to William Shakespeare',
+    badge: 'badge-moto', power: 'Moto',
+    keyInsight: 'Narrative cognition — thinking in story — is the original biological intelligence that predates writing, language, and logic. It was not invented. It evolved. And it was the cognitive revolution that made humans human.',
+    example: 'Shakespeare\'s plays are not entertainment — they are exercises in primal cognition. They train readers to inhabit multiple perspectives simultaneously, to feel forward through narrative, and to hold ambiguity without collapsing it.',
+    principle: 'Story is not a metaphor for thought. Story IS the structure of thought — the format in which the brain runs its predictions about the future.',
+    reflections: [
+      { id: 'r11_1', prompt: 'Think of a moment from your past that you keep returning to. What story are you trying to resolve with it?', placeholder: 'The memory and the unresolved story it carries...' },
+      { id: 'r11_2', prompt: 'What is the story you tell yourself about your own intelligence? Does it expand or limit what you attempt?', placeholder: 'My story about my own intelligence...' },
+    ],
+    exercises: [
+      'Read one scene from any Shakespeare play. Don\'t analyze it — live in it. Let the characters surprise you.',
+      'Tell a story from your past to someone who doesn\'t know you. Notice how their fresh perspective changes how you understand the story.',
+    ]
+  },
+  {
+    num: 12, id: 'storythinking', title: 'Storythinking',
+    part: 'Part III: Primal Science',
+    tagline: 'Pixar, William James, and the Science of Singular Minds',
+    badge: 'badge-storythinking', power: 'Storythinking',
+    keyInsight: 'Storythinking is the cognitive science underlying all twelve Primal tools. It holds that every mind is singular — irreducible to a data point — and that intelligence emerges from the interaction between your singular story and the world.',
+    example: 'Pixar\'s storytelling process begins not with a concept but with an emotion — a feeling of something true about the world. William James argued that consciousness is a stream, not a series of snapshots: narrative, not database.',
+    principle: 'Your singular mind — the particular, irreducible story of you — is not a limitation. It is the source of your greatest intelligence.',
+    reflections: [
+      { id: 'r12_1', prompt: 'What is uniquely, irreducibly YOU — the thing about your perspective that cannot be replicated by an algorithm or average person?', placeholder: 'What makes my mind singular...' },
+      { id: 'r12_2', prompt: 'If Pixar were to make a film of your life, what would be the central emotion — the feeling of something true — that the film would make audiences feel?', placeholder: 'The central emotion of my story...' },
+      { id: 'r12_3', prompt: 'Having worked through this book: what has changed in how you understand your own intelligence?', placeholder: 'My understanding before vs. after...' },
+    ],
+    exercises: [
+      'Watch a Pixar film (any one). Identify the moment the emotion "clicks" — the instant you feel the truth of the story. What made that moment land?',
+      'Write a one-paragraph "singular mind statement" — a description of the specific, irreplaceable quality of your own cognition.',
+      'Sit with the question: "What story am I part of?" Let the answer come as an image or feeling before translating it into words.',
+    ]
+  },
+];
+
+const DAILY_CHALLENGES = [
+  { power: 'Intuition',    badge: 'badge-intuition',   text: 'Find something genuinely surprising today — a behavior, object, or event that breaks the pattern you expected. Don\'t explain it away.', hint: 'Focus on Who, What, When, Where, How — delay Why.' },
+  { power: 'Imagination',  badge: 'badge-imagination', text: 'Name your single most important goal right now. For today, act as if it\'s the only goal that exists.', hint: 'Strategy is elimination. Forget goals 2 and 3.' },
+  { power: 'Emotion',      badge: 'badge-emotion',     text: 'Notice an emotion you feel strongly right now. Ask: what is this emotion telling me about my story?', hint: 'Grief = divided worlds. Anger = one blocked path. Fear = no visible path.' },
+  { power: 'Commonsense',  badge: 'badge-commonsense', text: 'Identify one decision you\'re facing. Do "Now + 1": what is the very next action? Take only that action.', hint: 'Don\'t plan further than your next task.' },
+  { power: 'Innovation',   badge: 'badge-innovation',  text: 'Find one thing that threatens or annoys you today. Identify one of its strengths you could incorporate.', hint: '"Eat your enemy."' },
+  { power: 'Resilience',   badge: 'badge-resilience',  text: 'Think of a current setback. Instead of trying to prevent it, ask: how could I get stronger FROM this?', hint: 'Antifragility means gaining from disruption.' },
+  { power: 'Decision-Making', badge: 'badge-decision', text: 'Take one decision you\'ve been stalling on. What is the minimum action to get new information? Do that today.', hint: 'Go where experts can\'t say no.' },
+  { power: 'Communication',badge: 'badge-communication',text: 'Write a message you need to send. Before sending, replace every "what" with "why." Send the revised version.', hint: '"Why" creates story. "What" creates instruction.' },
+  { power: 'Coaching',     badge: 'badge-coaching',    text: 'Observe someone in your life doing something well. Tell them specifically what you noticed — not praise, but observation.', hint: 'Coaching starts with seeing, not advising.' },
+  { power: 'Leadership',   badge: 'badge-leadership',  text: 'Take one leadership action today that you won\'t announce or seek feedback on. This is your Covert Victory.', hint: 'Act proud without needing to tell anyone.' },
+  { power: 'Intuition',    badge: 'badge-intuition',   text: 'Look at a stranger or someone you don\'t know well. What story explains their day today?', hint: 'Imagine backwards and forwards from a single moment.' },
+  { power: 'Imagination',  badge: 'badge-imagination', text: 'Do one routine task completely differently today. Not better — just different.', hint: 'Tactical variation prevents cognitive calcification.' },
+  { power: 'Emotion',      badge: 'badge-emotion',     text: 'Remember a sacrifice you made that you\'re proud of. What would you need to do today to earn that pride again?', hint: 'Pride signals alignment with your authentic story.' },
+  { power: 'Commonsense',  badge: 'badge-commonsense', text: 'Identify one rule you\'ve been following automatically. Test it: what situation would make this rule fail?', hint: 'Good rules survive examination. Brittle ones don\'t.' },
+  { power: 'Innovation',   badge: 'badge-innovation',  text: 'Recall a failed initiative from your past. What was its most original element? Can you use just that element today?', hint: 'Double down on the anomaly.' },
+];
+
+// ── STATE ────────────────────────────────────────────────
+
+let state = {
+  quizAnswers: new Array(20).fill(null),
+  quizScores: null,
+  currentQ: 0,
+  chapterData: {},    // { [id]: { reflections: {}, exercises: [], completed: false } }
+  story: {},
+  dailyStreak: 0,
+  lastDailyDate: null,
+  dailyDone: false,
+  challengeIndex: 0,
+  journals: {},       // { [dateStr]: string }
+  notes: [],          // [{id, text, date}]
+  timeline: [],       // [{type, title, date, note}]
+};
+
+function loadState() {
+  try {
+    const saved = localStorage.getItem('primalWorkbook');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      state = { ...state, ...parsed };
+      if (!Array.isArray(state.quizAnswers)) state.quizAnswers = new Array(20).fill(null);
+      if (!state.chapterData) state.chapterData = {};
+      if (!state.notes) state.notes = [];
+      if (!state.timeline) state.timeline = [];
+      if (!state.journals) state.journals = {};
+      if (!state.story) state.story = {};
+    }
+  } catch(e) { console.warn('State load error:', e); }
+}
+
+function saveState() {
+  try {
+    localStorage.setItem('primalWorkbook', JSON.stringify(state));
+  } catch(e) {}
+}
+
+function exportData() {
+  const date = new Date().toISOString().slice(0, 10);
+  const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `primal-workbook-backup-${date}.json`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+function importData(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const imported = JSON.parse(e.target.result);
+      // Merge over defaults, same as loadState pattern
+      state = { ...state, ...imported };
+      if (!Array.isArray(state.quizAnswers)) state.quizAnswers = new Array(20).fill(null);
+      if (!state.chapterData) state.chapterData = {};
+      if (!state.notes) state.notes = [];
+      if (!state.timeline) state.timeline = [];
+      if (!state.journals) state.journals = {};
+      if (!state.story) state.story = {};
+      saveState();
+      // Reload the current view to reflect imported data
+      const activeView = document.querySelector('.view.active');
+      const viewId = activeView ? activeView.id.replace('view-', '') : 'dashboard';
+      navigate(viewId, document.querySelector(`[data-view="${viewId}"]`));
+      showSaveToast();
+    } catch(err) {
+      alert("Could not read backup file. Make sure it's a valid primal-workbook JSON export.");
+    }
+  };
+  reader.readAsText(file);
+  // Reset so the same file can be re-imported if needed
+  event.target.value = '';
+}
+
+function showSaveToast() {
+  const t = document.getElementById('saveToast');
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+// ── NAVIGATION ──────────────────────────────────────────
+
+function navigate(viewId, navEl) {
+  // Hide all views
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById('view-' + viewId).classList.add('active');
+
+  // Update nav
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  if (navEl) navEl.classList.add('active');
+
+  // Scroll to top
+  window.scrollTo(0, 0);
+  closeSidebar();
+
+  // View-specific init
+  if (viewId === 'dashboard') renderDashboard();
+  if (viewId === 'workbook') renderWorkbook();
+  if (viewId === 'story') loadStoryFields();
+  if (viewId === 'daily') renderDailyPractice();
+  if (viewId === 'progress') renderProgress();
+}
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('overlay').classList.toggle('active');
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('overlay').classList.remove('active');
+}
+
+// ── QUIZ ─────────────────────────────────────────────────
+
+function renderQuizQuestion() {
+  const q = QUIZ_QUESTIONS[state.currentQ];
+  const pct = ((state.currentQ + 1) / 20 * 100).toFixed(0);
+  document.getElementById('qProgressLabel').textContent = `Question ${state.currentQ + 1} of 20`;
+  document.getElementById('qSectionLabel').textContent = `Section: ${q.section}`;
+  document.getElementById('qProgressBar').style.width = pct + '%';
+  document.getElementById('quizQuestion').textContent = q.q;
+
+  const sc = SECTION_COLORS[q.section];
+  const badge = document.getElementById('quizSectionBadge');
+  badge.textContent = `Section ${['I','II','III','IV'][['Intuition','Imagination','Emotion','Commonsense'].indexOf(q.section)]} · ${q.section}`;
+  badge.style.background = sc.bg.replace('rgba','rgba').replace('.15','.1');
+  badge.style.color = sc.color;
+  badge.style.borderColor = sc.color + '40';
+
+  // Render likert
+  const scale = document.getElementById('likertScale');
+  const labels = ['Strongly\nDisagree','Disagree','Neutral','Agree','Strongly\nAgree'];
+  scale.innerHTML = labels.map((lbl, i) => `
+    <button class="likert-btn ${state.quizAnswers[state.currentQ] === i+1 ? 'selected' : ''}"
+            onclick="selectAnswer(${i+1})">
+      <span class="likert-dot"></span>
+      ${lbl.replace('\n','<br>')}
+    </button>
+  `).join('');
+
+  document.getElementById('qPrevBtn').style.opacity = state.currentQ === 0 ? '.3' : '1';
+  document.getElementById('qPrevBtn').disabled = state.currentQ === 0;
+  document.getElementById('qNextBtn').textContent = state.currentQ === 19 ? 'See Results →' : 'Next →';
+}
+
+function selectAnswer(val) {
+  state.quizAnswers[state.currentQ] = val;
+  renderQuizQuestion();
+  saveState();
+}
+
+function quizNext() {
+  if (state.quizAnswers[state.currentQ] === null) {
+    alert('Please select an answer before continuing.');
+    return;
+  }
+  if (state.currentQ === 19) {
+    computeQuizScores();
+    showQuizResults();
+    return;
+  }
+  state.currentQ++;
+  renderQuizQuestion();
+}
+
+function quizPrev() {
+  if (state.currentQ > 0) {
+    state.currentQ--;
+    renderQuizQuestion();
+  }
+}
+
+function computeQuizScores() {
+  const sections = ['Intuition','Imagination','Emotion','Commonsense'];
+  const scores = {};
+  sections.forEach((sec, si) => {
+    let total = 0;
+    for (let i = si * 5; i < si * 5 + 5; i++) {
+      const raw = state.quizAnswers[i] || 3;
+      const q = QUIZ_QUESTIONS[i];
+      total += q.reverse ? (6 - raw) : raw;
+    }
+    scores[sec] = total;
+  });
+  state.quizScores = scores;
+  saveState();
+  addTimelineEvent('quiz', 'Completed Self-Assessment Quiz', new Date().toISOString(), `Scores: ${sections.map(s=>s+': '+scores[s]).join(', ')}`);
+}
+
+function showQuizResults() {
+  document.getElementById('quizScreen').style.display = 'none';
+  document.getElementById('quizResults').style.display = 'block';
+  renderResultsGrid();
+  drawRadarChart('radarChart2', state.quizScores);
+}
+
+function renderResultsGrid() {
+  const sections = ['Intuition','Imagination','Emotion','Commonsense'];
+  const grid = document.getElementById('resultsGrid');
+  grid.innerHTML = sections.map(sec => {
+    const score = state.quizScores[sec];
+    const sc = SECTION_COLORS[sec];
+    const [, , level, desc] = getInterpretation(score);
+    const pct = (score / 25 * 100).toFixed(0);
+    return `
+      <div class="result-card">
+        <span class="power-badge badge-${sec.toLowerCase()}">${POWER_ICONS[sec] || ''} ${sec}</span>
+        <div class="result-score" style="color:${sc.color}">${score}<span style="font-size:18px;color:var(--muted)">/25</span></div>
+        <div class="progress-bar result-bar">
+          <div class="progress-fill" style="width:${pct}%;background:${sc.color}"></div>
+        </div>
+        <div class="result-label">${level}</div>
+        <div class="result-desc">${desc}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+function retakeQuiz() {
+  state.quizAnswers = new Array(20).fill(null);
+  state.currentQ = 0;
+  state.quizScores = null;
+  document.getElementById('quizScreen').style.display = 'block';
+  document.getElementById('quizResults').style.display = 'none';
+  renderQuizQuestion();
+  saveState();
+}
+
+// ── RADAR CHART ──────────────────────────────────────────
+
+function drawRadarChart(canvasId, scores) {
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0, 0, W, H);
+
+  const cx = W / 2, cy = H / 2;
+  const R = Math.min(W, H) / 2 - 40;
+  const labels = ['Intuition','Imagination','Emotion','Commonsense'];
+  const colors = ['#D4A843','#2BBFB6','#E05555','#4CAF80'];
+  const n = labels.length;
+  const maxVal = 25;
+
+  const getXY = (i, r) => {
+    const angle = (i / n) * Math.PI * 2 - Math.PI / 2;
+    return { x: cx + r * Math.cos(angle), y: cy + r * Math.sin(angle) };
+  };
+
+  // Grid circles
+  ctx.strokeStyle = 'rgba(255,255,255,.06)';
+  ctx.lineWidth = 1;
+  [.2,.4,.6,.8,1].forEach(frac => {
+    ctx.beginPath();
+    for (let i = 0; i < n; i++) {
+      const p = getXY(i, R * frac);
+      i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y);
+    }
+    ctx.closePath();
+    ctx.stroke();
+  });
+
+  // Axes
+  ctx.strokeStyle = 'rgba(255,255,255,.1)';
+  for (let i = 0; i < n; i++) {
+    const p = getXY(i, R);
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(p.x, p.y);
+    ctx.stroke();
+  }
+
+  // Data fill
+  if (scores) {
+    ctx.beginPath();
+    labels.forEach((lbl, i) => {
+      const val = (scores[lbl] || 0) / maxVal;
+      const p = getXY(i, R * val);
+      i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y);
+    });
+    ctx.closePath();
+    ctx.fillStyle = 'rgba(212,168,67,.15)';
+    ctx.fill();
+    ctx.strokeStyle = '#D4A843';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // Dots
+    labels.forEach((lbl, i) => {
+      const val = (scores[lbl] || 0) / maxVal;
+      const p = getXY(i, R * val);
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+      ctx.fillStyle = colors[i];
+      ctx.fill();
+    });
+  }
+
+  // Labels
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  labels.forEach((lbl, i) => {
+    const p = getXY(i, R + 22);
+    ctx.fillStyle = colors[i];
+    ctx.font = 'bold 11px "DM Sans", sans-serif';
+    ctx.fillText(lbl, p.x, p.y);
+    if (scores) {
+      ctx.fillStyle = 'rgba(255,255,255,.5)';
+      ctx.font = '10px "DM Sans", sans-serif';
+      ctx.fillText(scores[lbl] + '/25', p.x, p.y + 14);
+    }
+  });
+}
+
+// ── DASHBOARD ────────────────────────────────────────────
+
+function renderDashboard() {
+  // Stats pills
+  const pills = document.getElementById('dashStats');
+  const totalExercises = CHAPTERS.reduce((a, c) => a + c.exercises.length, 0);
+  const doneExercises = Object.values(state.chapterData).reduce((a, cd) => a + (cd.exercises || []).filter(Boolean).length, 0);
+  const doneChapters = CHAPTERS.filter(c => state.chapterData[c.id]?.completed).length;
+  const quizDone = state.quizScores !== null;
+  pills.innerHTML = `
+    <div class="stat-pill"><strong>${doneChapters}</strong>/12 chapters</div>
+    <div class="stat-pill"><strong>${doneExercises}</strong>/${totalExercises} exercises</div>
+    <div class="stat-pill"><strong>${state.dailyStreak}</strong> day streak</div>
+    ${quizDone ? '<div class="stat-pill">✓ Quiz complete</div>' : '<div class="stat-pill text-muted">Quiz pending</div>'}
+  `;
+
+  // Power grid
+  const sections = ['Intuition','Imagination','Emotion','Commonsense'];
+  const grid = document.getElementById('dashPowerGrid');
+  grid.innerHTML = sections.map(sec => {
+    const score = state.quizScores ? state.quizScores[sec] : null;
+    const sc = SECTION_COLORS[sec];
+    const pct = score ? (score / 25 * 100).toFixed(0) : 0;
+    const [,,level] = score ? getInterpretation(score) : [0,0,'—'];
+    return `
+      <div class="power-card" onclick="navigate('quiz', document.querySelector('[data-view=quiz]'))">
+        <div class="power-icon">${POWER_ICONS[sec]}</div>
+        <div class="power-name">${sec}</div>
+        <div class="power-score">${score !== null ? score : '—'}</div>
+        <div class="power-bar">
+          <div class="power-bar-fill" style="width:${pct}%;background:${sc.color}"></div>
+        </div>
+        <div class="text-sm text-muted mt-8" style="font-size:10px">${score !== null ? level : 'Take quiz'}</div>
+      </div>
+    `;
+  }).join('');
+
+  // Radar
+  drawRadarChart('radarChart', state.quizScores);
+
+  // Chapter count
+  document.getElementById('chapCount').textContent = `${doneChapters}/12 chapters`;
+
+  // Chapter progress list
+  const list = document.getElementById('chapProgressList');
+  list.innerHTML = CHAPTERS.map(c => {
+    const cd = state.chapterData[c.id] || {};
+    const done = cd.completed;
+    return `
+      <div class="ch-progress-item" onclick="openChapter('${c.id}')">
+        <div class="ch-num ${done ? 'done' : ''}">${done ? '✓' : c.num}</div>
+        <div class="ch-progress-name" style="font-size:13px">${c.title}</div>
+        <span class="power-badge ${c.badge}" style="font-size:9px">${c.power}</span>
+      </div>
+    `;
+  }).join('');
+}
+
+// ── WORKBOOK ─────────────────────────────────────────────
+
+function renderWorkbook() {
+  // Show list, hide detail
+  document.getElementById('workbookList').style.display = 'block';
+  document.getElementById('chapterDetail').classList.remove('active');
+
+  const grid = document.getElementById('chapterGrid');
+  grid.innerHTML = CHAPTERS.map(c => {
+    const cd = state.chapterData[c.id] || {};
+    const done = cd.completed;
+    const exDone = (cd.exercises || []).filter(Boolean).length;
+    const exTotal = c.exercises.length;
+    const refDone = Object.values(cd.reflections || {}).filter(v => v && v.trim()).length;
+    const pct = exTotal > 0 ? Math.round(exDone / exTotal * 100) : 0;
+
+    return `
+      <div class="chapter-card ${done ? 'completed' : ''}" onclick="openChapter('${c.id}')">
+        <div class="ch-card-header">
+          <div class="ch-card-num">${String(c.num).padStart(2,'0')}</div>
+          <span class="power-badge ${c.badge}">${c.power}</span>
+        </div>
+        <div class="ch-card-title">${c.title}</div>
+        <div class="ch-card-tagline">${c.tagline}</div>
+        <div class="ch-card-progress">
+          <div class="ch-card-progress-info">
+            <span>${exDone}/${exTotal} exercises · ${refDone} reflections</span>
+            <span style="color:${done ? 'var(--green)' : 'var(--muted)'}">${done ? '✓ Complete' : pct + '%'}</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width:${pct}%"></div>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function openChapter(id) {
+  const ch = CHAPTERS.find(c => c.id === id);
+  if (!ch) return;
+
+  navigate('workbook', document.querySelector('[data-view=workbook]'));
+  document.getElementById('workbookList').style.display = 'none';
+
+  if (!state.chapterData[id]) {
+    state.chapterData[id] = { reflections: {}, exercises: [], completed: false };
+    saveState();
+  }
+  const cd = state.chapterData[id];
+
+  const detail = document.getElementById('chapterDetail');
+  detail.classList.add('active');
+
+  const exDone = (cd.exercises || []).filter(Boolean).length;
+
+  detail.innerHTML = `
+    <div class="flex justify-between items-center mb-24">
+      <button class="btn btn-ghost btn-sm" onclick="renderWorkbook()">← All Chapters</button>
+      <span class="label">${ch.part}</span>
+    </div>
+
+    <div class="ch-detail-header">
+      <div class="ch-detail-num">${String(ch.num).padStart(2,'0')}</div>
+      <div>
+        <span class="power-badge ${ch.badge}" style="margin-bottom:8px">${ch.power}</span>
+        <h1 style="font-size:36px;margin-bottom:4px">${ch.title}</h1>
+        <p class="italic text-muted" style="font-size:14px">${ch.tagline}</p>
+      </div>
+    </div>
+
+    <p style="font-size:15px;line-height:1.7;color:var(--text);margin-bottom:16px">${ch.principle}</p>
+
+    <div class="key-insight">
+      <span class="ki-label">Key Insight</span>
+      <p>${ch.keyInsight}</p>
+    </div>
+
+    <div class="example-callout">
+      <strong>Historical Example:</strong> ${ch.example}
+    </div>
+
+    <hr class="divider">
+
+    <div class="reflection-section mb-24">
+      <h3 style="margin-bottom:16px">Reflections</h3>
+      <div class="reflection-group">
+        ${ch.reflections.map((r, ri) => `
+          <div class="input-group">
+            <label class="input-label">${r.prompt}</label>
+            <textarea id="${r.id}"
+              placeholder="${r.placeholder}"
+              oninput="saveReflection('${id}','${r.id}',this.value)"
+              rows="4">${cd.reflections[r.id] || ''}</textarea>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <div style="margin-bottom:32px">
+      <h3 style="margin-bottom:16px">Exercises <span class="text-muted" style="font-weight:400;font-size:12px">(${exDone}/${ch.exercises.length} complete)</span></h3>
+      <ul class="exercise-list" id="exerciseList-${id}">
+        ${ch.exercises.map((ex, ei) => `
+          <li class="exercise-item ${cd.exercises[ei] ? 'checked' : ''}"
+              onclick="toggleExercise('${id}', ${ei}, this)">
+            <div class="exercise-check">${cd.exercises[ei] ? '✓' : ''}</div>
+            <div class="exercise-text">${ex}</div>
+          </li>
+        `).join('')}
+      </ul>
+    </div>
+
+    <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+      <button class="btn btn-primary" onclick="markChapterComplete('${id}')">
+        ${cd.completed ? '✓ Completed' : 'Mark Chapter Complete'}
+      </button>
+      ${ch.num < 12 ? `<button class="btn btn-secondary" onclick="openChapter('${CHAPTERS[ch.num].id}')">Next Chapter →</button>` : ''}
+    </div>
+  `;
+
+  window.scrollTo(0, 0);
+}
+
+function saveReflection(chId, fieldId, val) {
+  if (!state.chapterData[chId]) state.chapterData[chId] = { reflections: {}, exercises: [], completed: false };
+  state.chapterData[chId].reflections[fieldId] = val;
+  saveState();
+  showSaveToast();
+}
+
+function toggleExercise(chId, idx, el) {
+  if (!state.chapterData[chId]) state.chapterData[chId] = { reflections: {}, exercises: [], completed: false };
+  if (!Array.isArray(state.chapterData[chId].exercises)) state.chapterData[chId].exercises = [];
+  state.chapterData[chId].exercises[idx] = !state.chapterData[chId].exercises[idx];
+  el.classList.toggle('checked', state.chapterData[chId].exercises[idx]);
+  el.querySelector('.exercise-check').textContent = state.chapterData[chId].exercises[idx] ? '✓' : '';
+  saveState();
+  showSaveToast();
+}
+
+function markChapterComplete(chId) {
+  if (!state.chapterData[chId]) state.chapterData[chId] = { reflections: {}, exercises: [], completed: false };
+  state.chapterData[chId].completed = true;
+  saveState();
+  addTimelineEvent('chapter', `Completed Chapter: ${CHAPTERS.find(c=>c.id===chId)?.title}`, new Date().toISOString(), '');
+  showSaveToast();
+  openChapter(chId);
+}
+
+// ── STORY ────────────────────────────────────────────────
+
+function loadStoryFields() {
+  const fields = ['anomalies','narrative','strengths','goal','tactic1','tactic2','tactic3','covert'];
+  fields.forEach(f => {
+    const el = document.getElementById('story_' + f);
+    if (el) el.value = state.story[f] || '';
+  });
+}
+
+function saveStory() {
+  const fields = ['anomalies','narrative','strengths','goal','tactic1','tactic2','tactic3','covert'];
+  fields.forEach(f => {
+    const el = document.getElementById('story_' + f);
+    if (el) state.story[f] = el.value;
+  });
+  saveState();
+}
+
+function saveStoryExplicit() {
+  saveStory();
+  showSaveToast();
+}
+
+// ── DAILY PRACTICE ───────────────────────────────────────
+
+function renderDailyPractice() {
+  const today = new Date().toDateString();
+  if (state.lastDailyDate !== today) {
+    state.dailyDone = false;
+  }
+
+  const dayOfYear = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / 1000 / 60 / 60 / 24);
+  state.challengeIndex = state.challengeIndex || (dayOfYear % DAILY_CHALLENGES.length);
+  const challenge = DAILY_CHALLENGES[state.challengeIndex % DAILY_CHALLENGES.length];
+
+  document.getElementById('streakNum').textContent = state.dailyStreak;
+  document.getElementById('streakLabel').textContent = state.dailyStreak === 1 ? '1 Day Streak' : `${state.dailyStreak} Day Streak`;
+
+  const dailyHero = document.getElementById('dailyHero');
+  dailyHero.setAttribute('data-day', dayOfYear);
+
+  document.getElementById('dailyChallengeBadge').className = `power-badge ${challenge.badge}`;
+  document.getElementById('dailyChallengeBadge').textContent = challenge.power;
+  document.getElementById('dailyChallengeText').textContent = challenge.text;
+  document.getElementById('dailyChallengeHint').textContent = challenge.hint;
+  document.getElementById('dailyChallengeDay').textContent = `Day ${dayOfYear}`;
+
+  const dateLabel = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+  document.getElementById('journalDateLabel').textContent = dateLabel;
+
+  const todayKey = new Date().toISOString().split('T')[0];
+  const el = document.getElementById('journalEntry');
+  if (el) el.value = state.journals[todayKey] || '';
+}
+
+function markDailyDone() {
+  const today = new Date().toDateString();
+  if (!state.dailyDone) {
+    state.dailyDone = true;
+    if (state.lastDailyDate) {
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      if (state.lastDailyDate === yesterday.toDateString()) {
+        state.dailyStreak++;
+      } else if (state.lastDailyDate !== today) {
+        state.dailyStreak = 1;
+      }
+    } else {
+      state.dailyStreak = 1;
+    }
+    state.lastDailyDate = today;
+    saveState();
+    addTimelineEvent('daily', 'Completed Daily Practice', new Date().toISOString(), DAILY_CHALLENGES[state.challengeIndex % DAILY_CHALLENGES.length].text.substring(0, 60) + '…');
+    renderDailyPractice();
+    showSaveToast();
+  }
+}
+
+function nextChallenge() {
+  state.challengeIndex = (state.challengeIndex + 1) % DAILY_CHALLENGES.length;
+  saveState();
+  renderDailyPractice();
+}
+
+function saveJournal() {
+  const todayKey = new Date().toISOString().split('T')[0];
+  state.journals[todayKey] = document.getElementById('journalEntry').value;
+  saveState();
+}
+
+function saveJournalExplicit() {
+  saveJournal();
+  showSaveToast();
+}
+
+// ── PROGRESS ─────────────────────────────────────────────
+
+function renderProgress() {
+  const doneChapters = CHAPTERS.filter(c => state.chapterData[c.id]?.completed).length;
+  const totalExercises = CHAPTERS.reduce((a, c) => a + c.exercises.length, 0);
+  const doneExercises = Object.values(state.chapterData).reduce((a, cd) => a + (cd.exercises || []).filter(Boolean).length, 0);
+  const journalDays = Object.keys(state.journals).filter(k => state.journals[k] && state.journals[k].trim()).length;
+
+  document.getElementById('progressOverview').innerHTML = `
+    <div class="progress-stat"><div class="progress-stat-num">${doneChapters}</div><div class="progress-stat-label">Chapters Complete</div></div>
+    <div class="progress-stat"><div class="progress-stat-num">${doneExercises}</div><div class="progress-stat-label">Exercises Done</div></div>
+    <div class="progress-stat"><div class="progress-stat-num">${state.dailyStreak}</div><div class="progress-stat-label">Day Streak</div></div>
+    <div class="progress-stat"><div class="progress-stat-num">${journalDays}</div><div class="progress-stat-label">Journal Entries</div></div>
+  `;
+
+  // Timeline
+  const tl = document.getElementById('progressTimeline');
+  if (state.timeline.length === 0) {
+    tl.innerHTML = `<div class="empty-state"><div class="empty-icon">📅</div><p>Complete exercises and journal entries to build your timeline.</p></div>`;
+  } else {
+    const sorted = [...state.timeline].sort((a,b) => new Date(b.date) - new Date(a.date));
+    tl.innerHTML = sorted.slice(0, 20).map(ev => {
+      const icons = { quiz: '📊', chapter: '📖', daily: '🔥', note: '💡' };
+      const d = new Date(ev.date);
+      const dateStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+      return `
+        <div class="timeline-item">
+          <div class="timeline-dot">${icons[ev.type] || '⚡'}</div>
+          <div class="timeline-content">
+            <div class="tl-title">${ev.title}</div>
+            <div class="tl-date">${dateStr}</div>
+            ${ev.note ? `<div class="tl-note">${ev.note}</div>` : ''}
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  // Notes
+  renderNotes();
+}
+
+function addTimelineEvent(type, title, date, note) {
+  state.timeline.push({ type, title, date, note });
+  saveState();
+}
+
+function addNote() {
+  const input = document.getElementById('noteInput');
+  const text = input.value.trim();
+  if (!text) return;
+  const note = { id: Date.now(), text, date: new Date().toISOString() };
+  state.notes.push(note);
+  addTimelineEvent('note', 'Growth note added', note.date, text.substring(0, 80));
+  input.value = '';
+  saveState();
+  renderNotes();
+  showSaveToast();
+}
+
+function deleteNote(id) {
+  state.notes = state.notes.filter(n => n.id !== id);
+  saveState();
+  renderNotes();
+}
+
+function renderNotes() {
+  const list = document.getElementById('notesList');
+  if (!list) return;
+  if (state.notes.length === 0) {
+    list.innerHTML = `<div class="empty-state" style="padding:24px"><p>Add your first growth note above.</p></div>`;
+    return;
+  }
+  list.innerHTML = [...state.notes].reverse().map(n => {
+    const d = new Date(n.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    return `
+      <div class="note-item">
+        <div class="note-text">${n.text}</div>
+        <div class="note-date">${d}</div>
+        <button class="note-delete" onclick="deleteNote(${n.id})">×</button>
+      </div>
+    `;
+  }).join('');
+}
+
+// ── INIT ────────────────────────────────────────────────
+
+function init() {
+  loadState();
+  renderQuizQuestion();
+  renderDashboard();
+
+  // If quiz was already done, show results
+  if (state.quizScores) {
+    // Keep quiz showing the question form so user can retake
+  }
+
+  // Autosave story on navigate
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) saveState();
+  });
+}
+
+init();
+</script>
+</body>
+</html>
