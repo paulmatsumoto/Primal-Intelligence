@@ -16,6 +16,8 @@ It's a single HTML file. There's no external communication so no security concer
 - **Daily Practice**: A journal for building the habit 
 - **Progress Tracking**: A radar chart, streaks, timeline, the works
 
+---
+
 ## How to use it
 
 1. Clone or download the repo, star it because ur cool
